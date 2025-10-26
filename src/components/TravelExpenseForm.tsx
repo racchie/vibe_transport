@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import { TravelRecord, TransportationType } from '../types';
 
 interface TravelExpenseFormProps {
-  onSubmit: (record: Omit<TravelRecord, 'id'>) => void;
+  onSubmit?: (record: Omit<TravelRecord, 'id'>) => void;
+  onUpdate?: (record: TravelRecord) => void;
+  onCancel?: () => void;
+  initialRecord?: TravelRecord | null;
 }
 
-export default function TravelExpenseForm({ onSubmit }: TravelExpenseFormProps) {
+export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initialRecord = null }: TravelExpenseFormProps) {
   const [formData, setFormData] = useState({
-    // Avoid using Date() at render time to prevent SSR/client mismatch (hydration error).
-    // Initialize to empty and set current date on client mount.
+    // Keep initial empty to avoid SSR/client mismatch; populate on client mount.
+    id: '' as string | undefined,
     date: '',
     fromStation: '',
     toStation: '',
@@ -17,26 +20,48 @@ export default function TravelExpenseForm({ onSubmit }: TravelExpenseFormProps) 
     fare: 0,
   });
 
-  // Set today's date only on client after mount to keep server-render deterministic
-  // and avoid hydration mismatch.
+  // Populate form on client mount: if editing, use provided record; otherwise set today's date.
   useEffect(() => {
+    if (initialRecord) {
+      setFormData({
+        id: initialRecord.id,
+        date: initialRecord.date,
+        fromStation: initialRecord.fromStation,
+        toStation: initialRecord.toStation,
+        transportationType: initialRecord.transportationType,
+        transportationCompany: initialRecord.transportationCompany || '',
+        fare: initialRecord.fare,
+      });
+      return;
+    }
+
     if (!formData.date) {
       const today = new Date().toISOString().split('T')[0];
       setFormData((prev) => ({ ...prev, date: today }));
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRecord]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({
-      ...formData,
-      fromStation: '',
-      toStation: '',
-      transportationCompany: '',
-      fare: 0,
-    });
+    const payload = {
+      date: formData.date,
+      fromStation: formData.fromStation,
+      toStation: formData.toStation,
+      transportationType: formData.transportationType,
+      transportationCompany: formData.transportationCompany || undefined,
+      fare: Number(formData.fare),
+    };
+
+    if (formData.id && onUpdate) {
+      onUpdate({ ...(payload as Omit<TravelRecord, 'id'>), id: formData.id });
+    } else if (onSubmit) {
+      onSubmit(payload as Omit<TravelRecord, 'id'>);
+      setFormData((prev) => ({ ...prev, fromStation: '', toStation: '', transportationCompany: '', fare: 0 }));
+    }
   };
+
+  const isEditing = Boolean(formData.id);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -125,12 +150,23 @@ export default function TravelExpenseForm({ onSubmit }: TravelExpenseFormProps) 
         />
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-      >
-        記録を保存
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          {isEditing ? '更新する' : '記録を保存'}
+        </button>
+        {isEditing && (
+          <button
+            type="button"
+            onClick={() => onCancel && onCancel()}
+            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 focus:outline-none"
+          >
+            キャンセル
+          </button>
+        )}
+      </div>
     </form>
   );
 }

@@ -50,6 +50,18 @@ export default function Home() {
     setTravelRecords([newRecord, ...travelRecords]);
   };
 
+  const [editingRecord, setEditingRecord] = useState<TravelRecord | null>(null);
+
+  const handleUpdate = (updated: TravelRecord) => {
+    setTravelRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+    setEditingRecord(null);
+  };
+
+  const handleDelete = (id: string) => {
+    if (!confirm('この記録を削除しますか？')) return;
+    setTravelRecords((prev) => prev.filter((r) => r.id !== id));
+  };
+
   const handleUseRoute = (routeData: Omit<TravelRecord, 'id' | 'date'>) => {
     const newRecord: TravelRecord = {
       ...routeData,
@@ -64,9 +76,14 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-8">交通費記録アプリ</h1>
       
       <div className="grid gap-8 md:grid-cols-2">
-        <div>
+          <div>
           <h2 className="text-xl font-semibold mb-4">新規記録</h2>
-          <TravelExpenseForm onSubmit={handleSubmit} />
+          <TravelExpenseForm
+            onSubmit={handleSubmit}
+            onUpdate={handleUpdate}
+            onCancel={() => setEditingRecord(null)}
+            initialRecord={editingRecord || undefined}
+          />
         </div>
         
         <div className="space-y-8">
@@ -79,10 +96,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-4">記録履歴</h2>
             <div className="space-y-4">
               {travelRecords.map((record) => (
-                <div
-                  key={record.id}
-                  className="p-4 border rounded-lg shadow-sm"
-                >
+                <div key={record.id} className="p-4 border rounded-lg shadow-sm">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium">
@@ -93,7 +107,23 @@ export default function Home() {
                         {record.transportationCompany && ` - ${record.transportationCompany}`}
                       </p>
                     </div>
-                    <p className="font-medium">¥{record.fare.toLocaleString()}</p>
+                    <div className="flex items-start gap-4">
+                      <p className="font-medium">¥{record.fare.toLocaleString()}</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setEditingRecord(record)}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
+                          編集
+                        </button>
+                        <button
+                          onClick={() => handleDelete(record.id)}
+                          className="text-sm text-red-600 hover:underline"
+                        >
+                          削除
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
