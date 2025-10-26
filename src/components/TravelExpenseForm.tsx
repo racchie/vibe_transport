@@ -34,13 +34,15 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       });
       return;
     }
-
-    if (!formData.date) {
-      const today = new Date().toISOString().split('T')[0];
-      setFormData((prev) => ({ ...prev, date: today }));
-    }
+    // Reset to new-entry state when there's no initialRecord
+    const today = new Date().toISOString().split('T')[0];
+    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialRecord]);
+
+  // Confirmation modal state for update
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState<null | TravelRecord>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +56,10 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     };
 
     if (formData.id && onUpdate) {
-      onUpdate({ ...(payload as Omit<TravelRecord, 'id'>), id: formData.id });
+      // Show confirmation modal before updating
+      const updated: TravelRecord = { ...(payload as Omit<TravelRecord, 'id'>), id: formData.id };
+      setPendingPayload(updated);
+      setShowConfirm(true);
     } else if (onSubmit) {
       onSubmit(payload as Omit<TravelRecord, 'id'>);
       setFormData((prev) => ({ ...prev, fromStation: '', toStation: '', transportationCompany: '', fare: 0 }));
@@ -62,6 +67,13 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
   };
 
   const isEditing = Boolean(formData.id);
+
+  const resetToNew = () => {
+    const today = new Date().toISOString().split('T')[0];
+    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: 0 });
+    setPendingPayload(null);
+    setShowConfirm(false);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -160,13 +172,56 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
         {isEditing && (
           <button
             type="button"
-            onClick={() => onCancel && onCancel()}
+            onClick={() => {
+              // Clear form and notify parent to exit editing
+              resetToNew();
+              onCancel && onCancel();
+            }}
             className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 focus:outline-none"
           >
             キャンセル
           </button>
         )}
       </div>
+      {/* Confirmation modal (simple) */}
+      {showConfirm && pendingPayload && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-2">更新内容の確認</h3>
+            <div className="text-sm text-gray-700 mb-4">
+              <p>日付: {pendingPayload.date}</p>
+              <p>経路: {pendingPayload.fromStation} → {pendingPayload.toStation}</p>
+              <p>交通手段: {pendingPayload.transportationType === 'train' ? '電車' : 'バス'}</p>
+              {pendingPayload.transportationCompany && <p>交通機関: {pendingPayload.transportationCompany}</p>}
+              <p>運賃: ¥{pendingPayload.fare.toLocaleString()}</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded bg-gray-100"
+                onClick={() => {
+                  setShowConfirm(false);
+                  setPendingPayload(null);
+                }}
+              >
+                キャンセル
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-indigo-600 text-white"
+                onClick={() => {
+                  // perform update
+                  if (pendingPayload && onUpdate) {
+                    onUpdate(pendingPayload);
+                  }
+                  // reset form to new-entry state
+                  resetToNew();
+                }}
+              >
+                更新を確定
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
