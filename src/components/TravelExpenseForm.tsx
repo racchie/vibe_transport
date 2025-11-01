@@ -86,7 +86,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="date"
           value={formData.date}
           onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
           required
         />
       </div>
@@ -100,7 +100,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="fromStation"
           value={formData.fromStation}
           onChange={(e) => setFormData({ ...formData, fromStation: e.target.value })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
           required
         />
       </div>
@@ -114,7 +114,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="toStation"
           value={formData.toStation}
           onChange={(e) => setFormData({ ...formData, toStation: e.target.value })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
           required
         />
       </div>
@@ -127,7 +127,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="transportationType"
           value={formData.transportationType}
           onChange={(e) => setFormData({ ...formData, transportationType: e.target.value as TransportationType })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
         >
           <option value="train">電車</option>
           <option value="bus">バス</option>
@@ -143,7 +143,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="transportationCompany"
           value={formData.transportationCompany}
           onChange={(e) => setFormData({ ...formData, transportationCompany: e.target.value })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
         />
       </div>
 
@@ -156,7 +156,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           id="fare"
           value={formData.fare}
           onChange={(e) => setFormData({ ...formData, fare: Number(e.target.value) })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
           required
           min="0"
         />
@@ -186,9 +186,9 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       {/* Confirmation modal (simple) */}
       {showConfirm && pendingPayload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold mb-2">更新内容の確認</h3>
-            <div className="text-sm text-gray-700 mb-4">
+            <div className="text-sm text-gray-700 dark:text-gray-200 mb-4">
               <p>日付: {pendingPayload.date}</p>
               <p>経路: {pendingPayload.fromStation} → {pendingPayload.toStation}</p>
               <p>交通手段: {pendingPayload.transportationType === 'train' ? '電車' : 'バス'}</p>

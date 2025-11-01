@@ -21,3 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 基本的なドキュメント（README.md, LICENSE）の追加
   - GitHub Actionsの設定
   - CHANGELOG.mdの作成
+
+  ## [0.0.2] - 2025-11-01
+
+  ### Added
+  - タブ切替UIを導入（「新規記録」「よく使う経路」「記録履歴」「データのエクスポート」）
+  - データのエクスポートを専用タブへ移動
+  - 記録保存・よく使う経路の利用時にトースト通知を表示（登録完了メッセージ）
+
+  ### Fixed
+  - ダークモードで文字や境界線が見えなくなる問題に対する一時的なスタイル調整
