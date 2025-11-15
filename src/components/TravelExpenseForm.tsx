@@ -182,7 +182,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       <div className="flex gap-2">
         <button
           type="submit"
-          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
         >
           {isEditing ? '更新する' : '記録を保存'}
         </button>
@@ -196,7 +196,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
                 onCancel();
               }
             }}
-            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 focus:outline-none"
+            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 focus:outline-none"
           >
             キャンセル
           </button>
@@ -206,8 +206,8 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       {showConfirm && pendingPayload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold mb-2">更新内容の確認</h3>
-            <div className="text-sm text-gray-700 dark:text-gray-200 mb-4">
+            <h3 className="text-lg font-semibold mb-2 dark:text-gray-100">更新内容の確認</h3>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
               <p>日付: {pendingPayload.date}</p>
               <p>経路: {pendingPayload.fromStation} → {pendingPayload.toStation}</p>
               <p>交通手段: {pendingPayload.transportationType === 'train' ? '電車' : 'バス'}</p>
@@ -216,7 +216,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
             </div>
             <div className="flex justify-end gap-2">
               <button
-                className="px-4 py-2 rounded bg-gray-100"
+                className="px-4 py-2 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                 onClick={() => {
                   setShowConfirm(false);
                   setPendingPayload(null);
@@ -225,7 +225,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
                 キャンセル
               </button>
               <button
-                className="px-4 py-2 rounded bg-indigo-600 text-white"
+                className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-800"
                 onClick={() => {
                   // perform update
                   if (pendingPayload && onUpdate) {

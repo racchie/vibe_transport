@@ -146,8 +146,8 @@ export default function Home() {
   }, [travelRecords, filters, sortBy, sortOrder]);
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">交通費記録アプリ</h1>
+    <main className="container mx-auto px-4 py-8 dark:bg-gray-950 dark:text-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 dark:text-white">交通費記録アプリ</h1>
 
       {/* タブナビゲーション */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
@@ -223,9 +223,9 @@ export default function Home() {
                 onChangePageSize={(n) => { setPageSize(n); setPage(1); }}
               />
               <div className="flex items-center gap-2 mb-4">
-                <label className="text-sm">表示モード</label>
-                <button onClick={() => setCompactView(false)} className={`px-2 py-1 border rounded text-sm ${!compactView ? 'bg-gray-100' : ''}`}>詳細</button>
-                <button onClick={() => setCompactView(true)} className={`px-2 py-1 border rounded text-sm ${compactView ? 'bg-gray-100' : ''}`}>コンパクト</button>
+                <label className="text-sm dark:text-gray-200">表示モード</label>
+                <button onClick={() => setCompactView(false)} className={`px-2 py-1 border rounded text-sm ${!compactView ? 'bg-gray-100 dark:bg-gray-700' : 'dark:border-gray-600'}`}>詳細</button>
+                <button onClick={() => setCompactView(true)} className={`px-2 py-1 border rounded text-sm ${compactView ? 'bg-gray-100 dark:bg-gray-700' : 'dark:border-gray-600'}`}>コンパクト</button>
               </div>
             </div>
 
@@ -233,7 +233,7 @@ export default function Home() {
               <div className="space-y-6">
                 {groupedRecords.map(([month, recs]) => (
                   <div key={month}>
-                    <h2 className="text-lg font-semibold mb-2">{month}</h2>
+                    <h2 className="text-lg font-semibold mb-2 dark:text-gray-100">{month}</h2>
                     <HistoryList records={recs} onEdit={(r) => { setEditingRecord(r); setActiveTab('expense'); }} onDelete={handleDelete} onUse={handleUseRoute} compact={compactView} />
                   </div>
                 ))}
@@ -249,9 +249,9 @@ export default function Home() {
                 />
 
                 <div className="flex items-center gap-2 justify-center mt-4">
-                  <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-                  <div className="text-sm">{page} / {Math.max(1, Math.ceil(totalFilteredCount / pageSize))}</div>
-                  <button disabled={page >= Math.ceil(totalFilteredCount / pageSize)} onClick={() => setPage((p) => p + 1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
+                  <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-200">Prev</button>
+                  <div className="text-sm dark:text-gray-300">{page} / {Math.max(1, Math.ceil(totalFilteredCount / pageSize))}</div>
+                  <button disabled={page >= Math.ceil(totalFilteredCount / pageSize)} onClick={() => setPage((p) => p + 1)} className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-200">Next</button>
                 </div>
               </>
             )}

@@ -93,10 +93,10 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">よく利用する経路</h2>
+      <h2 className="text-lg font-semibold dark:text-gray-100">よく利用する経路</h2>
 
       <button
-        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-800"
         onClick={() => setShowForm((v) => !v)}
       >
         {showForm ? 'キャンセル' : '新規経路を追加'}
@@ -175,7 +175,7 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+              className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800"
             >
               登録
             </button>
@@ -240,7 +240,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
             name="name"
             value={editForm.name}
             onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
-            className="w-full border rounded px-2 py-1"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
             required
           />
         </div>
@@ -251,7 +251,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
               name="fromStation"
               value={editForm.fromStation}
               onChange={e => setEditForm(f => ({ ...f, fromStation: e.target.value }))}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
@@ -261,7 +261,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
               name="toStation"
               value={editForm.toStation}
               onChange={e => setEditForm(f => ({ ...f, toStation: e.target.value }))}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
@@ -273,7 +273,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
               name="transportationType"
               value={editForm.transportationType}
               onChange={e => setEditForm(f => ({ ...f, transportationType: e.target.value as TransportationType }))}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
             >
               <option value="train">電車</option>
               <option value="bus">バス</option>
@@ -285,7 +285,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
               name="transportationCompany"
               value={editForm.transportationCompany}
               onChange={e => setEditForm(f => ({ ...f, transportationCompany: e.target.value }))}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
         </div>
@@ -296,14 +296,14 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
             type="text"
             value={editForm.fare}
             onChange={e => setEditForm(f => ({ ...f, fare: e.target.value }))}
-            className="w-full border rounded px-2 py-1"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
             placeholder="0"
             required
           />
         </div>
         <div className="flex gap-2 justify-end">
-          <button type="button" onClick={onCancelEdit} className="px-3 py-1 bg-gray-300 rounded">キャンセル</button>
-          <button type="submit" className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">保存</button>
+          <button type="button" onClick={onCancelEdit} className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">キャンセル</button>
+          <button type="submit" className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800">保存</button>
         </div>
       </form>
     );
@@ -333,7 +333,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
         </button>
         <button
           onClick={() => onEditRoute(route)}
-          className="w-full bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200"
+          className="w-full bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:hover:bg-yellow-800"
         >
           編集
         </button>

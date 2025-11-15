@@ -105,7 +105,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
 
   return (
   <div className="space-y-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-      <h3 className="font-medium text-lg">データのエクスポート</h3>
+      <h3 className="font-medium text-lg dark:text-gray-100">データのエクスポート</h3>
       
       <div className="space-y-4">
         <div className="flex flex-wrap gap-4">
@@ -118,7 +118,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
               onChange={(e) => setDateRange(e.target.value as DateRange)}
               className="text-indigo-600 focus:ring-indigo-500"
             />
-            <label htmlFor="all" className="text-sm font-medium">全期間</label>
+            <label htmlFor="all" className="text-sm font-medium dark:text-gray-200">全期間</label>
           </div>
           
           <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
               onChange={(e) => setDateRange(e.target.value as DateRange)}
               className="text-indigo-600 focus:ring-indigo-500"
             />
-            <label htmlFor="custom" className="text-sm font-medium">期間指定</label>
+            <label htmlFor="custom" className="text-sm font-medium dark:text-gray-200">期間指定</label>
           </div>
 
           <div className="flex items-center gap-2">
@@ -142,14 +142,14 @@ export default function ExportPanel({ records }: ExportPanelProps) {
               onChange={(e) => setDateRange(e.target.value as DateRange)}
               className="text-indigo-600 focus:ring-indigo-500"
             />
-            <label htmlFor="monthly" className="text-sm font-medium">月指定</label>
+            <label htmlFor="monthly" className="text-sm font-medium dark:text-gray-200">月指定</label>
           </div>
         </div>
 
         {dateRange === 'custom' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                 開始日
               </label>
               <input
@@ -163,7 +163,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                 終了日
               </label>
               <input
@@ -180,7 +180,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
 
         {dateRange === 'monthly' && (
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 dark:text-gray-200">
               月を選択
             </label>
             <select
@@ -207,7 +207,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
               onChange={(e) => setFormat(e.target.value as ExportFormat)}
                 className="text-indigo-600 focus:ring-indigo-500"
             />
-            <label htmlFor="xlsx" className="text-sm font-medium">Excel (.xlsx)</label>
+            <label htmlFor="xlsx" className="text-sm font-medium dark:text-gray-200">Excel (.xlsx)</label>
           </div>
           
           <div className="flex items-center gap-2">
@@ -219,7 +219,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
               onChange={(e) => setFormat(e.target.value as ExportFormat)}
                 className="text-indigo-600 focus:ring-indigo-500"
             />
-            <label htmlFor="csv" className="text-sm font-medium">CSV</label>
+            <label htmlFor="csv" className="text-sm font-medium dark:text-gray-200">CSV</label>
           </div>
         </div>
       </div>
@@ -227,7 +227,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
       <div className="flex justify-end">
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
         >
           エクスポート
         </button>
