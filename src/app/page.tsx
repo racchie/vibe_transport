@@ -1,10 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TravelRecord, FrequentRoute } from '../types';
 import TravelExpenseForm from '../components/TravelExpenseForm';
 import FrequentRoutesList from '../components/FrequentRoutesList';
 import ExportPanel from '../components/ExportPanel';
+import HistoryControls from '../components/HistoryControls';
+import HistoryList from '../components/HistoryList';
+
+// Helper functions moved to module scope so memoization in the component
+// doesn't trip the React Compiler's "preserve manual memoization" check.
+function filterRecords(records: TravelRecord[], filters: { q?: string; from?: string; to?: string }) {
+  return records.filter((r) => {
+    if (filters.q) {
+      const q = filters.q.toLowerCase();
+      const hay = `${r.fromStation} ${r.toStation}`.toLowerCase();
+      if (!hay.includes(q) && !(r.transportationCompany || '').toLowerCase().includes(q)) return false;
+    }
+    if (filters.from) {
+      if (new Date(r.date) < new Date(filters.from)) return false;
+    }
+    if (filters.to) {
+      if (new Date(r.date) > new Date(filters.to)) return false;
+    }
+    return true;
+  });
+}
+
+function sortRecords(records: TravelRecord[], sortBy: 'date' | 'transportationType', sortOrder: 'asc' | 'desc') {
+  const dir = sortOrder === 'asc' ? 1 : -1;
+  return [...records].sort((a, b) => {
+    if (sortBy === 'date') {
+      return (new Date(a.date).getTime() - new Date(b.date).getTime()) * dir;
+    }
+    if (sortBy === 'transportationType') {
+      return a.transportationType.localeCompare(b.transportationType) * dir;
+    }
+    return 0;
+  });
+}
 
 type TabType = 'expense' | 'routes' | 'history' | 'export';
 
@@ -110,6 +144,20 @@ export default function Home() {
     setFrequentRoutes((prev) => prev.map((r) => (r.id === edited.id ? edited : r)));
   };
 
+  // --- 履歴表示のソート・フィルタ状態 (MVP) ---
+  const [sortBy, setSortBy] = useState<'date' | 'transportationType'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [filters, setFilters] = useState<{ q?: string; from?: string; to?: string }>({});
+  const [compactView, setCompactView] = useState(false);
+
+  const onChangeFilters = (f: { q?: string; from?: string; to?: string }) => setFilters(f);
+  const clearFilters = () => setFilters({});
+
+  const displayedRecords = useMemo(() => {
+    const filtered = filterRecords(travelRecords, filters);
+    return sortRecords(filtered, sortBy, sortOrder);
+  }, [travelRecords, filters, sortBy, sortOrder]);
+
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">交通費記録アプリ</h1>
@@ -173,43 +221,30 @@ export default function Home() {
 
         {activeTab === 'history' && (
           <div>
-            <div className="space-y-4">
-              {travelRecords.map((record) => (
-                <div key={record.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">
-                        {record.fromStation} → {record.toStation}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        {record.date} | {record.transportationType === 'train' ? '電車' : 'バス'}
-                        {record.transportationCompany && ` - ${record.transportationCompany}`}
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <p className="font-medium">¥{record.fare.toLocaleString()}</p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingRecord(record);
-                            setActiveTab('expense');
-                          }}
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          編集
-                        </button>
-                        <button
-                          onClick={() => handleDelete(record.id)}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          削除
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="mb-2">
+              <HistoryControls
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                filters={filters}
+                onChangeSort={(s) => setSortBy(s)}
+                onToggleOrder={() => setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'))}
+                onChangeFilters={onChangeFilters}
+                onClear={clearFilters}
+              />
+              <div className="flex items-center gap-2 mb-4">
+                <label className="text-sm">表示モード</label>
+                <button onClick={() => setCompactView(false)} className={`px-2 py-1 border rounded text-sm ${!compactView ? 'bg-gray-100' : ''}`}>詳細</button>
+                <button onClick={() => setCompactView(true)} className={`px-2 py-1 border rounded text-sm ${compactView ? 'bg-gray-100' : ''}`}>コンパクト</button>
+              </div>
             </div>
+
+            <HistoryList
+              records={displayedRecords}
+              onEdit={(r) => { setEditingRecord(r); setActiveTab('expense'); }}
+              onDelete={handleDelete}
+              onUse={handleUseRoute}
+              compact={compactView}
+            />
           </div>
         )}
       </div>
