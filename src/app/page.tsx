@@ -30,24 +30,23 @@ export default function Home() {
 
   // Load persisted data only on client after mount to avoid hydration mismatches.
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('travelRecords');
-      if (saved) setTravelRecords(JSON.parse(saved));
-    } catch (e) {
-      // ignore JSON parse errors
-      // eslint-disable-next-line no-console
-      console.warn('Could not load travelRecords from localStorage', e);
-    }
-  }, []);
+    const loadData = () => {
+      try {
+        const saved = localStorage.getItem('travelRecords');
+        if (saved) setTravelRecords(JSON.parse(saved));
+      } catch (e) {
+        console.warn('Could not load travelRecords from localStorage', e);
+      }
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('frequentRoutes');
-      if (saved) setFrequentRoutes(JSON.parse(saved));
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('Could not load frequentRoutes from localStorage', e);
-    }
+      try {
+        const saved = localStorage.getItem('frequentRoutes');
+        if (saved) setFrequentRoutes(JSON.parse(saved));
+      } catch (e) {
+        console.warn('Could not load frequentRoutes from localStorage', e);
+      }
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {

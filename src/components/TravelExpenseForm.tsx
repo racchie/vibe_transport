@@ -37,7 +37,6 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     // Reset to new-entry state when there's no initialRecord
     const today = new Date().toISOString().split('T')[0];
     setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: 0 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialRecord]);
 
   // Confirmation modal state for update
@@ -175,7 +174,9 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
             onClick={() => {
               // Clear form and notify parent to exit editing
               resetToNew();
-              onCancel && onCancel();
+              if (onCancel) {
+                onCancel();
+              }
             }}
             className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 focus:outline-none"
           >
