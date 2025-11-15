@@ -19,6 +19,10 @@ interface Props {
   onToggleOrder: () => void;
   onChangeFilters: (f: Filters) => void;
   onClear: () => void;
+  groupBy: 'none' | 'month';
+  onChangeGroupBy: (g: 'none' | 'month') => void;
+  pageSize: number;
+  onChangePageSize: (n: number) => void;
 }
 
 export default function HistoryControls({
@@ -29,6 +33,10 @@ export default function HistoryControls({
   onToggleOrder,
   onChangeFilters,
   onClear,
+  groupBy,
+  onChangeGroupBy,
+  pageSize,
+  onChangePageSize,
 }: Props) {
   return (
     <div className="flex flex-col md:flex-row gap-2 items-start md:items-center mb-4">
@@ -78,7 +86,20 @@ export default function HistoryControls({
         />
       </div>
 
-      <div className="ml-auto">
+      <div className="flex gap-2 items-center ml-auto">
+        <label className="text-sm">グループ</label>
+        <select value={groupBy} onChange={(e) => onChangeGroupBy(e.target.value as 'none' | 'month')} className="border rounded px-2 py-1 text-sm">
+          <option value="none">なし</option>
+          <option value="month">月別</option>
+        </select>
+
+        <label className="text-sm">表示数</label>
+        <select value={pageSize} onChange={(e) => onChangePageSize(Number(e.target.value))} className="border rounded px-2 py-1 text-sm">
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+        </select>
+
         <button onClick={onClear} className="border rounded px-3 py-1 text-sm">クリア</button>
       </div>
     </div>

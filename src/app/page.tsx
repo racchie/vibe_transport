@@ -7,38 +7,7 @@ import FrequentRoutesList from '../components/FrequentRoutesList';
 import ExportPanel from '../components/ExportPanel';
 import HistoryControls from '../components/HistoryControls';
 import HistoryList from '../components/HistoryList';
-
-// Helper functions moved to module scope so memoization in the component
-// doesn't trip the React Compiler's "preserve manual memoization" check.
-function filterRecords(records: TravelRecord[], filters: { q?: string; from?: string; to?: string }) {
-  return records.filter((r) => {
-    if (filters.q) {
-      const q = filters.q.toLowerCase();
-      const hay = `${r.fromStation} ${r.toStation}`.toLowerCase();
-      if (!hay.includes(q) && !(r.transportationCompany || '').toLowerCase().includes(q)) return false;
-    }
-    if (filters.from) {
-      if (new Date(r.date) < new Date(filters.from)) return false;
-    }
-    if (filters.to) {
-      if (new Date(r.date) > new Date(filters.to)) return false;
-    }
-    return true;
-  });
-}
-
-function sortRecords(records: TravelRecord[], sortBy: 'date' | 'transportationType', sortOrder: 'asc' | 'desc') {
-  const dir = sortOrder === 'asc' ? 1 : -1;
-  return [...records].sort((a, b) => {
-    if (sortBy === 'date') {
-      return (new Date(a.date).getTime() - new Date(b.date).getTime()) * dir;
-    }
-    if (sortBy === 'transportationType') {
-      return a.transportationType.localeCompare(b.transportationType) * dir;
-    }
-    return 0;
-  });
-}
+import { filterRecords, sortRecords, groupByMonth, Filters } from '../lib/historyUtils';
 
 type TabType = 'expense' | 'routes' | 'history' | 'export';
 
@@ -147,15 +116,33 @@ export default function Home() {
   // --- 履歴表示のソート・フィルタ状態 (MVP) ---
   const [sortBy, setSortBy] = useState<'date' | 'transportationType'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [filters, setFilters] = useState<{ q?: string; from?: string; to?: string }>({});
+  const [filters, setFilters] = useState<Filters>({});
   const [compactView, setCompactView] = useState(false);
+  const [groupBy, setGroupBy] = useState<'none' | 'month'>('none');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const onChangeFilters = (f: { q?: string; from?: string; to?: string }) => setFilters(f);
+  const onChangeFilters = (f: Filters) => { setFilters(f); setPage(1); };
   const clearFilters = () => setFilters({});
 
   const displayedRecords = useMemo(() => {
     const filtered = filterRecords(travelRecords, filters);
-    return sortRecords(filtered, sortBy, sortOrder);
+    const sorted = sortRecords(filtered, sortBy, sortOrder);
+    // paging applies only when not grouping
+    if (groupBy === 'none') {
+      const start = (page - 1) * pageSize;
+      return sorted.slice(start, start + pageSize);
+    }
+    return sorted;
+  }, [travelRecords, filters, sortBy, sortOrder, page, pageSize, groupBy]);
+
+  const groupedRecords = useMemo(() => {
+    if (groupBy !== 'month') return [] as Array<[string, typeof travelRecords]>;
+    return groupByMonth(sortRecords(filterRecords(travelRecords, filters), sortBy, sortOrder));
+  }, [travelRecords, filters, sortBy, sortOrder, groupBy]);
+
+  const totalFilteredCount = useMemo(() => {
+    return sortRecords(filterRecords(travelRecords, filters), sortBy, sortOrder).length;
   }, [travelRecords, filters, sortBy, sortOrder]);
 
   return (
@@ -230,6 +217,10 @@ export default function Home() {
                 onToggleOrder={() => setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'))}
                 onChangeFilters={onChangeFilters}
                 onClear={clearFilters}
+                groupBy={groupBy}
+                onChangeGroupBy={(g) => { setGroupBy(g); setPage(1); }}
+                pageSize={pageSize}
+                onChangePageSize={(n) => { setPageSize(n); setPage(1); }}
               />
               <div className="flex items-center gap-2 mb-4">
                 <label className="text-sm">表示モード</label>
@@ -238,13 +229,32 @@ export default function Home() {
               </div>
             </div>
 
-            <HistoryList
-              records={displayedRecords}
-              onEdit={(r) => { setEditingRecord(r); setActiveTab('expense'); }}
-              onDelete={handleDelete}
-              onUse={handleUseRoute}
-              compact={compactView}
-            />
+            {groupBy === 'month' ? (
+              <div className="space-y-6">
+                {groupedRecords.map(([month, recs]) => (
+                  <div key={month}>
+                    <h2 className="text-lg font-semibold mb-2">{month}</h2>
+                    <HistoryList records={recs} onEdit={(r) => { setEditingRecord(r); setActiveTab('expense'); }} onDelete={handleDelete} onUse={handleUseRoute} compact={compactView} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <HistoryList
+                  records={displayedRecords}
+                  onEdit={(r) => { setEditingRecord(r); setActiveTab('expense'); }}
+                  onDelete={handleDelete}
+                  onUse={handleUseRoute}
+                  compact={compactView}
+                />
+
+                <div className="flex items-center gap-2 justify-center mt-4">
+                  <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
+                  <div className="text-sm">{page} / {Math.max(1, Math.ceil(totalFilteredCount / pageSize))}</div>
+                  <button disabled={page >= Math.ceil(totalFilteredCount / pageSize)} onClick={() => setPage((p) => p + 1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
