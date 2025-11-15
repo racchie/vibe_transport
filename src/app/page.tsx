@@ -7,7 +7,9 @@ import FrequentRoutesList from '../components/FrequentRoutesList';
 import ExportPanel from '../components/ExportPanel';
 import HistoryControls from '../components/HistoryControls';
 import HistoryList from '../components/HistoryList';
+import Toast from '../components/Toast';
 import { filterRecords, sortRecords, groupByMonth, Filters } from '../lib/historyUtils';
+import { useToast } from '../hooks/useToast';
 
 type TabType = 'expense' | 'routes' | 'history' | 'export';
 
@@ -17,12 +19,7 @@ export default function Home() {
   const [travelRecords, setTravelRecords] = useState<TravelRecord[]>([]);
   const [frequentRoutes, setFrequentRoutes] = useState<FrequentRoute[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('expense');
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string, ms = 3500) => {
-    setToastMessage(msg);
-    window.setTimeout(() => setToastMessage(null), ms);
-  };
+  const { toasts, addToast, removeToast } = useToast();
 
   const formatDateTime = (d: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -70,7 +67,7 @@ export default function Home() {
     const when = formatDateTime(new Date());
     const vehicle = record.transportationType === 'train' ? '電車' : 'バス';
     const vehicleLabel = record.transportationCompany ? `${vehicle}(${record.transportationCompany})` : vehicle;
-    showToast(`登録完了：${when}、${vehicleLabel}で${record.fromStation}〜${record.toStation}、${record.fare}円`);
+    addToast(`登録完了：${when}、${vehicleLabel}で${record.fromStation}〜${record.toStation}、${record.fare}円`, { type: 'success' });
   };
 
   const [editingRecord, setEditingRecord] = useState<TravelRecord | null>(null);
@@ -96,7 +93,7 @@ export default function Home() {
     const when = formatDateTime(new Date());
     const vehicle = routeData.transportationType === 'train' ? '電車' : 'バス';
     const vehicleLabel = routeData.transportationCompany ? `${vehicle}(${routeData.transportationCompany})` : vehicle;
-    showToast(`登録完了：${when}、${vehicleLabel}で${routeData.fromStation}〜${routeData.toStation}、${routeData.fare}円`);
+    addToast(`登録完了：${when}、${vehicleLabel}で${routeData.fromStation}〜${routeData.toStation}、${routeData.fare}円`, { type: 'success' });
   };
 
   // よく利用する経路の追加
@@ -258,14 +255,8 @@ export default function Home() {
           </div>
         )}
       </div>
-      {/* トースト */}
-      {toastMessage && (
-        <div className="fixed right-4 bottom-4 z-50">
-          <div className="max-w-xs w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 shadow-lg rounded-lg px-4 py-3">
-            <p className="text-sm">{toastMessage}</p>
-          </div>
-        </div>
-      )}
+      {/* Toast container */}
+      <Toast toasts={toasts} onRemove={removeToast} />
     </main>
   );
 }
