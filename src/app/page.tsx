@@ -28,6 +28,15 @@ export default function Home() {
     return `${date} ${time}`;
   };
 
+  // スキップリンク向けスクロール関数
+  const skipToMainContent = () => {
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.focus();
+      mainContent.scrollIntoView();
+    }
+  };
+
   // Load persisted data only on client after mount to avoid hydration mismatches.
   useEffect(() => {
     const loadData = () => {
@@ -148,22 +157,62 @@ export default function Home() {
 
   return (
     <main className="container mx-auto px-4 py-8 dark:bg-gray-950 dark:text-gray-100 min-h-screen">
+      {/* スキップリンク */}
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          skipToMainContent();
+        }}
+        className="sr-only sr-only-focusable bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        メインコンテンツへスキップ
+      </a>
+
       <h1 className="text-3xl font-bold mb-8 dark:text-white">交通費記録アプリ</h1>
 
       {/* タブナビゲーション */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-        <nav className="-mb-px flex gap-2" aria-label="Tabs">
+        <nav className="-mb-px flex gap-2" aria-label="Tabs" role="tablist">
           {[
             { id: 'expense' as const, label: '新規記録' },
             { id: 'routes' as const, label: 'よく使う経路' },
             { id: 'history' as const, label: '記録履歴' },
             { id: 'export' as const, label: 'データのエクスポート' },
-          ].map((tab) => (
+          ].map((tab, index, tabs) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              onKeyDown={(e) => {
+                // Arrow left/right で隣接タブに移動
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                  e.preventDefault();
+                  const currentIndex = tabs.findIndex((t) => t.id === activeTab);
+                  let nextIndex = currentIndex;
+                  if (e.key === 'ArrowLeft') {
+                    nextIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+                  } else {
+                    nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+                  }
+                  setActiveTab(tabs[nextIndex].id);
+                }
+                // Home/End キーでタブの先頭/最後に移動
+                if (e.key === 'Home') {
+                  e.preventDefault();
+                  setActiveTab(tabs[0].id);
+                }
+                if (e.key === 'End') {
+                  e.preventDefault();
+                  setActiveTab(tabs[tabs.length - 1].id);
+                }
+              }}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
               className={`
                 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium w-full max-w-[200px]
+                transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500
                 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600 dark:text-blue-300'
@@ -178,7 +227,7 @@ export default function Home() {
       </div>
 
       {/* タブコンテンツ */}
-      <div className="space-y-8">
+      <div id="main-content" tabIndex={-1} className="focus:outline-none space-y-8">
         {activeTab === 'expense' && (
           <>
             <div>

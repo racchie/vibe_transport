@@ -40,8 +40,16 @@ export default function HistoryControls({
 }: Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Escapeキーでフィルタをクリア
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onClear();
+    }
+  };
+
   return (
-    <div className="space-y-3 mb-4">
+    <div className="space-y-3 mb-4" onKeyDown={handleKeyDown}>
       {/* Main controls: Sort + Search (always visible on mobile) */}
       <div className="flex flex-col gap-2">
         {/* Sort controls */}

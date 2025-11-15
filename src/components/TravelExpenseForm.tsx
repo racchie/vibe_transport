@@ -83,6 +83,15 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     }
   };
 
+  // Ctrl+Enterでフォーム送信
+  const handleFormKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const form = e.currentTarget as HTMLFormElement;
+      form.dispatchEvent(new Event('submit', { bubbles: true }));
+    }
+  };
+
   const isEditing = Boolean(formData.id);
 
   const resetToNew = () => {
@@ -93,7 +102,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="space-y-4">
       <div>
         <label htmlFor="date" className="block text-sm font-medium">
           日付
