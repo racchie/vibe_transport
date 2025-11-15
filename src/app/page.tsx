@@ -73,7 +73,11 @@ export default function Home() {
   const [editingRecord, setEditingRecord] = useState<TravelRecord | null>(null);
 
   const handleUpdate = (updated: TravelRecord) => {
-    setTravelRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+    // 更新されたレコードを先頭に移動（新しい日付順に表示）
+    setTravelRecords((prev) => {
+      const filtered = prev.filter((r) => r.id !== updated.id);
+      return [updated, ...filtered];
+    });
     setEditingRecord(null);
   };
 
