@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TravelRecord, TransportationType } from '../types';
+import { ValidationRules, parseNumericInput } from '../lib/validation';
 
 interface TravelExpenseFormProps {
   onSubmit?: (record: Omit<TravelRecord, 'id'>) => void;
@@ -17,7 +18,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     toStation: '',
     transportationType: 'train' as TransportationType,
     transportationCompany: '',
-    fare: 0,
+    fare: '', // 文字列に変更（IME 入力対応）
   });
 
   // Populate form on client mount: if editing, use provided record; otherwise set today's date.
@@ -30,13 +31,13 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
         toStation: initialRecord.toStation,
         transportationType: initialRecord.transportationType,
         transportationCompany: initialRecord.transportationCompany || '',
-        fare: initialRecord.fare,
+        fare: String(initialRecord.fare),
       });
       return;
     }
     // Reset to new-entry state when there's no initialRecord
     const today = new Date().toISOString().split('T')[0];
-    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: 0 });
+    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: '' });
   }, [initialRecord]);
 
   // Confirmation modal state for update
@@ -45,13 +46,30 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // バリデーション確認
+    if (!ValidationRules.isValidStationName(formData.fromStation)) {
+      alert('出発駅が無効です');
+      return;
+    }
+    if (!ValidationRules.isValidStationName(formData.toStation)) {
+      alert('到着駅が無効です');
+      return;
+    }
+    if (!ValidationRules.isValidFare(formData.fare)) {
+      alert('運賃が無効です');
+      return;
+    }
+
+    const fareNumber = parseNumericInput(formData.fare);
+
     const payload = {
       date: formData.date,
       fromStation: formData.fromStation,
       toStation: formData.toStation,
       transportationType: formData.transportationType,
       transportationCompany: formData.transportationCompany || undefined,
-      fare: Number(formData.fare),
+      fare: fareNumber,
     };
 
     if (formData.id && onUpdate) {
@@ -61,7 +79,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       setShowConfirm(true);
     } else if (onSubmit) {
       onSubmit(payload as Omit<TravelRecord, 'id'>);
-      setFormData((prev) => ({ ...prev, fromStation: '', toStation: '', transportationCompany: '', fare: 0 }));
+      setFormData((prev) => ({ ...prev, fromStation: '', toStation: '', transportationCompany: '', fare: '' }));
     }
   };
 
@@ -69,7 +87,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
 
   const resetToNew = () => {
     const today = new Date().toISOString().split('T')[0];
-    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: 0 });
+    setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: '' });
     setPendingPayload(null);
     setShowConfirm(false);
   };
@@ -151,13 +169,13 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           運賃
         </label>
         <input
-          type="number"
+          type="text"
           id="fare"
           value={formData.fare}
-          onChange={(e) => setFormData({ ...formData, fare: Number(e.target.value) })}
+          onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
           className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
           required
-          min="0"
+          placeholder="0"
         />
       </div>
 

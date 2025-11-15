@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { FrequentRoute, TravelRecord, TransportationType } from '../types';
+import { ValidationRules, parseNumericInput } from '../lib/validation';
 
 
 interface FrequentRoutesListProps {
@@ -29,14 +30,14 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
     setEditingId(null);
   };
 
-  // 新規経路追加フォームの状態
-  const [form, setForm] = useState<Omit<FrequentRoute, 'id'>>({
+  // 新規経路追加フォームの状態（fare はフォーム内では文字列）
+  const [form, setForm] = useState({
     name: '',
     fromStation: '',
     toStation: '',
-    transportationType: 'train',
+    transportationType: 'train' as TransportationType,
     transportationCompany: '',
-    fare: 0,
+    fare: '', // 文字列に変更（IME 入力対応）
   });
   const [showForm, setShowForm] = useState(false);
 
@@ -44,24 +45,48 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'fare' ? Number(value) : value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.fromStation || !form.toStation || !form.fare) {
-      alert('すべての必須項目を入力してください');
+    
+    // バリデーション確認
+    if (!form.name.trim()) {
+      alert('経路名が無効です');
       return;
     }
-    onAddRoute(form);
+    if (!ValidationRules.isValidStationName(form.fromStation)) {
+      alert('出発駅が無効です');
+      return;
+    }
+    if (!ValidationRules.isValidStationName(form.toStation)) {
+      alert('到着駅が無効です');
+      return;
+    }
+    if (!ValidationRules.isValidFare(form.fare)) {
+      alert('運賃が無効です');
+      return;
+    }
+
+    const fareNumber = parseNumericInput(form.fare);
+    onAddRoute({
+      name: form.name,
+      fromStation: form.fromStation,
+      toStation: form.toStation,
+      transportationType: form.transportationType,
+      transportationCompany: form.transportationCompany,
+      fare: fareNumber,
+    });
+
     setForm({
       name: '',
       fromStation: '',
       toStation: '',
       transportationType: 'train',
       transportationCompany: '',
-      fare: 0,
+      fare: '',
     });
     setShowForm(false);
   };
@@ -139,12 +164,12 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
             <label className="block text-sm font-medium">運賃*</label>
             <input
               name="fare"
-              type="number"
+              type="text"
               value={form.fare}
               onChange={handleChange}
               className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
+              placeholder="0"
               required
-              min={0}
             />
           </div>
           <div className="flex justify-end">
@@ -185,10 +210,16 @@ interface RouteCardProps {
 }
 
 function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCancelEdit }: RouteCardProps) {
-  const [editForm, setEditForm] = useState<FrequentRoute>(route);
+  const [editForm, setEditForm] = useState<Omit<FrequentRoute, 'fare'> & { fare: string }>({
+    ...route,
+    fare: String(route.fare), // 編集フォームでは文字列として扱う
+  });
   // 編集対象が切り替わったらフォームも更新
   useEffect(() => {
-    setEditForm(route);
+    setEditForm({
+      ...route,
+      fare: String(route.fare),
+    });
   }, [route]);
   if (isEditing) {
     return (
@@ -196,7 +227,11 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
         className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 space-y-2"
         onSubmit={e => {
           e.preventDefault();
-          onSaveEdit(editForm);
+          const fareNumber = parseNumericInput(editForm.fare);
+          onSaveEdit({
+            ...editForm,
+            fare: fareNumber,
+          });
         }}
       >
         <div>
@@ -258,12 +293,12 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
           <label className="block text-sm font-medium">運賃*</label>
           <input
             name="fare"
-            type="number"
+            type="text"
             value={editForm.fare}
-            onChange={e => setEditForm(f => ({ ...f, fare: Number(e.target.value) }))}
+            onChange={e => setEditForm(f => ({ ...f, fare: e.target.value }))}
             className="w-full border rounded px-2 py-1"
+            placeholder="0"
             required
-            min={0}
           />
         </div>
         <div className="flex gap-2 justify-end">
