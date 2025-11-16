@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2025-11-16
+
+### Added
+- Geolocation Stage 1 (station-only suggestions)
+  - "📍 現在地" ボタンで最寄り駅候補を表示（HeartRails Express API）
+  - 候補選択で駅名反映、交通手段を自動で「電車」に設定、会社名を補助入力
+- Small UX improvements
+  - 候補取得中の表示（検索中…）と「候補が見つかりませんでした」のメッセージ
+  - 候補リストのキーボード操作（↑/↓/Enter/Esc）とハイライト
+- Tests
+  - フックのユニットテスト（geolocation成功/拒否）
+  - フォーム統合テスト（候補選択で入力反映）
+
+### Notes
+- 運賃の自動計算・経路探索は次期リリース（有料API導入後）
+- バス停は本バージョンでは未対応（手入力で対応）
+
 ## [0.0.3] - 2025-11-15
 
 ### Added

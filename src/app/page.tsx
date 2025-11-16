@@ -236,6 +236,7 @@ export default function Home() {
                 onUpdate={handleUpdate}
                 onCancel={() => setEditingRecord(null)}
                 initialRecord={editingRecord || undefined}
+                addToast={addToast}
               />
             </div>
           </>
