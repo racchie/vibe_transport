@@ -28,6 +28,7 @@ export interface UseNearbyPlacesResult {
   candidates: Place[];
   error: NearbyPlacesError | null;
   fetchFromCurrentLocation: (type: PlaceType) => Promise<void>;
+  searchByName: (query: string, type: PlaceType) => Promise<void>;
   reset: () => void;
 }
 
@@ -82,6 +83,41 @@ export function useNearbyPlaces(): UseNearbyPlacesResult {
     }
   };
 
+  const searchByName = async (query: string, type: PlaceType) => {
+    setStatus('loading');
+    setError(null);
+    setCandidates([]);
+
+    try {
+      // caching via sessionStorage
+      const cacheKey = `station_suggest_${query}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached) as Place[];
+        setCandidates(parsed);
+        setStatus('success');
+        return;
+      }
+
+      const places = await placeProvider.searchByName(query, { maxResults: 10 });
+      setCandidates(places);
+      setStatus('success');
+
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(places));
+      } catch (e) {
+        // ignore storage errors
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError({ code: 'api-error', message: err.message });
+      } else {
+        setError({ code: 'api-error', message: '予期しないエラーが発生しました。' });
+      }
+      setStatus('error');
+    }
+  };
+
   const reset = () => {
     setStatus('idle');
     setCandidates([]);
@@ -93,6 +129,7 @@ export function useNearbyPlaces(): UseNearbyPlacesResult {
     candidates,
     error,
     fetchFromCurrentLocation,
+    searchByName,
     reset,
   };
 }

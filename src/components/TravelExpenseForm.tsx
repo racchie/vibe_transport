@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { TravelRecord, TransportationType, Place } from '../types';
 import { ValidationRules, parseNumericInput } from '../lib/validation';
+import { RAILWAY_COMPANIES, BUS_COMPANIES, guessCompanyFromLine as guessCompFromLine } from '../lib/transportationCompanies';
 import { useNearbyPlaces } from '../hooks/useNearbyPlaces';
 import { formatCurrency } from '../lib/formatting';
 
@@ -25,7 +26,10 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
   });
 
   // 位置情報検索用の状態
-  const { status, candidates, error, fetchFromCurrentLocation, reset } = useNearbyPlaces();
+  const { status, candidates, error, fetchFromCurrentLocation, searchByName, reset } = useNearbyPlaces();
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formWarnings, setFormWarnings] = useState<Record<string, string>>({});
+  const [typingTimer, setTypingTimer] = useState<number | null>(null);
   const [showCandidates, setShowCandidates] = useState(false);
   const [targetField, setTargetField] = useState<'from' | 'to' | null>(null);
   const candidatesRef = useRef<HTMLDivElement>(null);
@@ -78,14 +82,14 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
         ...prev,
         fromStation: place.name,
         transportationType: 'train', // 駅を選択したので自動的に電車に
-        transportationCompany: place.operator || prev.transportationCompany,
+        transportationCompany: guessCompFromLine(place.operator || prev.transportationCompany || ''),
       }));
     } else if (targetField === 'to') {
       setFormData((prev) => ({
         ...prev,
         toStation: place.name,
         transportationType: 'train', // 駅を選択したので自動的に電車に
-        transportationCompany: place.operator || prev.transportationCompany,
+        transportationCompany: guessCompFromLine(place.operator || prev.transportationCompany || ''),
       }));
     }
     setShowCandidates(false);
@@ -95,6 +99,8 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       addToast(`${place.name} を選択しました`, { type: 'success' });
     }
   };
+
+  
 
   // エラー時のトースト表示
   useEffect(() => {
@@ -146,20 +152,96 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     }
   };
 
+  const validateField = (name: string, value: any) => {
+    const errors = { ...formErrors };
+    const warnings = { ...formWarnings };
+    delete errors[name];
+    delete warnings[name];
+
+    switch (name) {
+      case 'date':
+        if (value && !ValidationRules.isValidDate(value)) {
+          errors.date = '日付は YYYY-MM-DD 形式である必要があります';
+        }
+        break;
+      case 'fromStation':
+        if (value && !ValidationRules.isValidStationName(value)) {
+          errors.fromStation = '出発駅/バス停の名前は 1〜100 文字である必要があります';
+        }
+        break;
+      case 'toStation':
+        if (value && !ValidationRules.isValidStationName(value)) {
+          errors.toStation = '到着駅/バス停の名前は 1〜100 文字である必要があります';
+        }
+        break;
+      case 'transportationCompany':
+        if (value && !ValidationRules.isValidTransportationCompany(value)) {
+          errors.transportationCompany = '交通機関名は 50 文字以内である必要があります';
+        }
+        break;
+      case 'fare':
+        const num = parseNumericInput(value);
+        if (!ValidationRules.isValidFare(num)) {
+          errors.fare = '運賃は 0 以上の数値である必要があります（小数点以下 2 桁まで）';
+        } else {
+          if (num < 100) warnings.fare = '運賃が 100円未満です。低額の可能性があります。';
+          else if (num > 10000) warnings.fare = '運賃が 10,000円を超えています。高額の可能性があります。';
+          if (num > 50000) errors.fare = '運賃は 50,000円以下である必要があります';
+        }
+        break;
+      default:
+        break;
+    }
+
+    setFormErrors(errors);
+    setFormWarnings(warnings);
+  };
+
+  const debouncedSearch = (query: string, field: 'from' | 'to') => {
+    if (typingTimer) {
+      window.clearTimeout(typingTimer);
+    }
+    const t = window.setTimeout(async () => {
+      if (query.trim().length >= 2) {
+        setTargetField(field);
+        try {
+          await searchByName(query, 'station');
+          setShowCandidates(true);
+          setHighlightedIndex(0);
+        } catch (e) {
+          // noop
+        }
+      }
+    }, 300);
+    setTypingTimer(t);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // バリデーション確認
+    // Synchronous validation to avoid stale state
+    const errors: Record<string, string> = {};
+    const warnings: Record<string, string> = {};
     if (!ValidationRules.isValidStationName(formData.fromStation)) {
-      alert('出発駅が無効です');
-      return;
+      errors.fromStation = '出発駅/バス停の名前は 1〜100 文字である必要があります';
     }
     if (!ValidationRules.isValidStationName(formData.toStation)) {
-      alert('到着駅が無効です');
-      return;
+      errors.toStation = '到着駅/バス停の名前は 1〜100 文字である必要があります';
     }
-    if (!ValidationRules.isValidFare(formData.fare)) {
-      alert('運賃が無効です');
+    const fareNum = parseNumericInput(formData.fare);
+    if (!ValidationRules.isValidFare(fareNum)) {
+      errors.fare = '運賃は 0 以上の数値である必要があります（小数点以下 2 桁まで）';
+    } else {
+      if (fareNum < 100) warnings.fare = '運賃が 100円未満です。低額の可能性があります。';
+      if (fareNum > 10000) warnings.fare = '運賃が 10,000円を超えています。高額の可能性があります。';
+    }
+    if (!ValidationRules.isValidTransportationCompany(formData.transportationCompany)) {
+      errors.transportationCompany = '交通機関名は 50 文字以内である必要があります';
+    }
+    setFormErrors(errors);
+    setFormWarnings(warnings);
+    if (Object.keys(errors).length > 0) {
+      // Block submission if any validation errors still exist
+      // Provide user-friendly feedback; inline messages already shown
       return;
     }
 
@@ -248,10 +330,18 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               type="text"
               id="fromStation"
               value={formData.fromStation}
-              onChange={(e) => setFormData({ ...formData, fromStation: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFormData({ ...formData, fromStation: val });
+                validateField('fromStation', val);
+                debouncedSearch(val, 'from');
+              }}
+              onBlur={(e) => validateField('fromStation', e.target.value)}
               onKeyDown={(e) => handleCandidatesKeyDown(e, 'from')}
-              className="flex-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
+              className={`flex-1 block w-full rounded-md border ${formErrors.fromStation ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'} shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500`}
               required
+              aria-invalid={!!formErrors.fromStation}
+              aria-describedby={formErrors.fromStation ? 'fromStation-error' : undefined}
             />
             <button
               type="button"
@@ -295,6 +385,12 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               ))}
             </div>
           )}
+          {formErrors.fromStation && (
+            <p id="fromStation-error" className="text-red-600 dark:text-red-400 text-sm mt-1">{formErrors.fromStation}</p>
+          )}
+          {formWarnings.fromStation && (
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm mt-1">{formWarnings.fromStation}</p>
+          )}
         </div>
       </div>
 
@@ -308,10 +404,18 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               type="text"
               id="toStation"
               value={formData.toStation}
-              onChange={(e) => setFormData({ ...formData, toStation: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFormData({ ...formData, toStation: val });
+                validateField('toStation', val);
+                debouncedSearch(val, 'to');
+              }}
+              onBlur={(e) => validateField('toStation', e.target.value)}
               onKeyDown={(e) => handleCandidatesKeyDown(e, 'to')}
-              className="flex-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
+              className={`flex-1 block w-full rounded-md border ${formErrors.toStation ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'} shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500`}
               required
+              aria-invalid={!!formErrors.toStation}
+              aria-describedby={formErrors.toStation ? 'toStation-error' : undefined}
             />
             <button
               type="button"
@@ -355,6 +459,12 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               ))}
             </div>
           )}
+          {formErrors.toStation && (
+            <p id="toStation-error" className="text-red-600 dark:text-red-400 text-sm mt-1">{formErrors.toStation}</p>
+          )}
+          {formWarnings.toStation && (
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm mt-1">{formWarnings.toStation}</p>
+          )}
         </div>
       </div>
 
@@ -368,9 +478,24 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
             type="text"
             id="transportationCompany"
             value={formData.transportationCompany}
-            onChange={(e) => setFormData({ ...formData, transportationCompany: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+            onChange={(e) => {
+              const val = e.target.value;
+              setFormData({ ...formData, transportationCompany: val });
+              validateField('transportationCompany', val);
+            }}
+            list="company-suggestions"
+            className={`mt-1 block w-full rounded-md border ${formErrors.transportationCompany ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'} shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]`}
+            aria-invalid={!!formErrors.transportationCompany}
+            aria-describedby={formErrors.transportationCompany ? 'transportationCompany-error' : undefined}
           />
+          <datalist id="company-suggestions">
+            {(formData.transportationType === 'train' ? RAILWAY_COMPANIES : BUS_COMPANIES).map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+          {formErrors.transportationCompany && (
+            <p className="text-red-600 dark:text-red-400 text-sm mt-1">{formErrors.transportationCompany}</p>
+          )}
         </div>
 
         <div>
@@ -381,11 +506,24 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
             type="text"
             id="fare"
             value={formData.fare}
-            onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+            onChange={(e) => {
+              const val = e.target.value;
+              setFormData({ ...formData, fare: val });
+              validateField('fare', val);
+            }}
+            onBlur={(e) => validateField('fare', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${formErrors.fare ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'} shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]`}
             required
             placeholder="0"
+            aria-invalid={!!formErrors.fare}
+            aria-describedby={formErrors.fare ? 'fare-error' : undefined}
           />
+          {formErrors.fare && (
+            <p id="fare-error" className="text-red-600 dark:text-red-400 text-sm mt-1">{formErrors.fare}</p>
+          )}
+          {formWarnings.fare && (
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm mt-1">{formWarnings.fare}</p>
+          )}
         </div>
       </div>
 

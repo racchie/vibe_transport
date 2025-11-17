@@ -111,4 +111,43 @@ export class HeartRailsProvider implements PlaceSearchProvider {
       );
     }
   }
+
+  /**
+   * 名前検索（部分一致）で駅を検索
+   * @param name キーワード（2文字以上推奨）
+   */
+  async searchByName(name: string, options?: { maxResults?: number }): Promise<Place[]> {
+    const maxResults = options?.maxResults ?? 10;
+    if (!name || String(name).trim().length === 0) return [];
+
+    try {
+      const url = new URL(this.baseUrl);
+      url.searchParams.set('method', 'getStations');
+      url.searchParams.set('name', name);
+
+      const response = await fetch(url.toString());
+      if (!response.ok) throw new Error(`HeartRails API error: ${response.status}`);
+      const data: HeartRailsResponse = await response.json();
+      if (!data.response?.station || !Array.isArray(data.response.station)) return [];
+
+      const places: Place[] = data.response.station
+        .map((station, index): Place => ({
+          id: `heartrails-name-${station.line}-${station.name}-${index}`,
+          name: station.name,
+          latitude: parseFloat(station.y),
+          longitude: parseFloat(station.x),
+          type: 'station',
+          operator: station.line,
+          distanceMeters: 0,
+        }))
+        .filter((p) => !isNaN(p.latitude) && !isNaN(p.longitude))
+        .slice(0, maxResults);
+
+      return places;
+    } catch (error) {
+      console.error('HeartRails API error (name search):', error);
+      // Do not throw to allow graceful fallback
+      return [];
+    }
+  }
 }

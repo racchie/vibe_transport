@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { FrequentRoute, TravelRecord, TransportationType } from '../types';
 import { ValidationRules, parseNumericInput } from '../lib/validation';
+import { RAILWAY_COMPANIES, BUS_COMPANIES } from '../lib/transportationCompanies';
 
 
 interface FrequentRoutesListProps {
@@ -156,8 +157,14 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
                 name="transportationCompany"
                 value={form.transportationCompany}
                 onChange={handleChange}
+                list="company-suggestions"
                 className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
               />
+              <datalist id="company-suggestions">
+                {(form.transportationType === 'train' ? RAILWAY_COMPANIES : BUS_COMPANIES).map(c => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
             </div>
           </div>
           <div>
@@ -285,8 +292,14 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
               name="transportationCompany"
               value={editForm.transportationCompany}
               onChange={e => setEditForm(f => ({ ...f, transportationCompany: e.target.value }))}
+              list="company-suggestions"
               className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900 dark:text-gray-100"
             />
+            <datalist id="company-suggestions">
+              {(editForm.transportationType === 'train' ? RAILWAY_COMPANIES : BUS_COMPANIES).map(c => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </div>
         </div>
         <div>
