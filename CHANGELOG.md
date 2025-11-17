@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # CHANGELOG
 
-## [Unreleased] - 2025-11-17
+## [Unreleased]
+
+_No changes yet._
+
+## [0.1.0] - 2025-11-17
 
 ### Added
 - **レスポンシブUI最適化（モバイル完全対応）**
