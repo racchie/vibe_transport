@@ -77,9 +77,11 @@
   - ⏸️ フォームバリデーションエラーの `aria-describedby` （次回リリース）
   - ⏸️ 動的コンテンツの `aria-live` 通知（次回リリース）
   - ⏸️ スクリーンリーダーテスト（NVDA/JAWS/VoiceOver）
-- [ ] ダークモード自動検出
-  - システム設定（`prefers-color-scheme: dark`）の自動検出
-  - ユーザー設定の localStorage 保存
+- [x] ダークモード自動検出
+  - ✅ システム設定（`prefers-color-scheme: dark`）の自動検出
+  - ✅ ユーザー設定の localStorage 保存
+  - ✅ `useTheme` カスタムフック作成（自動検出・手動切替・永続化）
+  - ✅ テーマ切り替えボタンコンポーネント（light/dark/system の3モード）
 
 ## 未実装 / 推奨タスク（優先度：中）
 

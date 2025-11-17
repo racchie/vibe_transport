@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - 2025-11-17
 
 ### Added
+- **ダークモード自動検出**
+  - システムカラースキーム設定（`prefers-color-scheme: dark`）の自動検出
+  - ユーザー設定のlocalStorage保存（light/dark/system の3モード）
+  - テーマ切り替えボタンコンポーネント（アイコン: 太陽/月/モニター）
+  - `useTheme` カスタムフック作成（自動検出・手動切替・永続化）
+  - ページ右上にテーマ切り替えボタンを配置
 - **アクセシビリティ強化（スクリーンリーダー対応）**
   - `aria-label` をアクションボタンに追加（HistoryList, FrequentRoutesList, ExportPanel）
   - 編集/削除/使用ボタンにコンテキスト情報を含むラベルを付与
@@ -19,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Improved
 - スクリーンリーダー使用時のユーザー体験向上
 - WCAG 2.1 AA 準拠の維持と強化
+- ダークモード対応の完全自動化（手動切替も可能）
 
 ---
 

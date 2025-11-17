@@ -8,6 +8,7 @@ import ExportPanel from '../components/ExportPanel';
 import HistoryControls from '../components/HistoryControls';
 import HistoryList from '../components/HistoryList';
 import Toast from '../components/Toast';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { filterRecords, sortRecords, groupByMonth, Filters } from '../lib/historyUtils';
 import { useToast } from '../hooks/useToast';
 
@@ -176,6 +177,11 @@ export default function Home() {
       </a>
 
       <h1 className="text-3xl font-bold mb-8 dark:text-white">交通費記録アプリ</h1>
+
+      {/* Theme toggle */}
+      <div className="flex justify-end mb-4">
+        <ThemeToggle />
+      </div>
 
       {/* タブナビゲーション */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
