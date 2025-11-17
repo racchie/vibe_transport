@@ -83,7 +83,7 @@ export function useNearbyPlaces(): UseNearbyPlacesResult {
     }
   };
 
-  const searchByName = async (query: string, type: PlaceType) => {
+  const searchByName = async (query: string, _type: PlaceType) => {
     setStatus('loading');
     setError(null);
     setCandidates([]);
@@ -105,7 +105,7 @@ export function useNearbyPlaces(): UseNearbyPlacesResult {
 
       try {
         sessionStorage.setItem(cacheKey, JSON.stringify(places));
-      } catch (e) {
+      } catch {
         // ignore storage errors
       }
     } catch (err) {

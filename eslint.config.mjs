@@ -21,6 +21,16 @@ const eslintConfig = defineConfig([
       // Hydration mismatch prevention
       "@next/next/no-html-link-for-pages": "warn",
       "@next/next/no-sync-scripts": "error",
+      
+      // Allow unused variables that start with underscore
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ],
     },
   },
   {

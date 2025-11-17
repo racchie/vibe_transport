@@ -152,7 +152,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
     }
   };
 
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string) => {
     const errors = { ...formErrors };
     const warnings = { ...formWarnings };
     delete errors[name];
@@ -208,7 +208,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           await searchByName(query, 'station');
           setShowCandidates(true);
           setHighlightedIndex(0);
-        } catch (e) {
+        } catch {
           // noop
         }
       }
