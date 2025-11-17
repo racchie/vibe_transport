@@ -88,6 +88,16 @@
 
 ## 未実装 / 推奨タスク（優先度：高）
 
+- [ ] E2Eテスト導入（Playwright）【最優先】
+  - フレームワーク: Playwright 採用（Chromium/Firefox/WebKit）
+  - 依存追加: `@playwright/test`、ブラウザ依存は `playwright install --with-deps`
+  - スクリプト: `test:e2e`（ヘッドレス）, `test:e2e:ui`, `e2e:install`
+  - 設定: `playwright.config.ts`（`webServer`で`next start -p 3000`起動, `baseURL`設定, タイムアウト/並列/リトライ）
+  - モック: HeartRails API を `page.route()` で固定レスポンス
+  - 位置情報: `permissions: ['geolocation']` + 座標指定で現在地ボタンを検証
+  - 初期テスト: `tests/e2e/` 配下に smoke / form&validation / geolocation / history_export を作成
+  - CI統合: `.github/workflows/ci.yml` に `npx playwright install --with-deps` と `npm run test:e2e` を追加、失敗時にスクショ/動画をアーティファクト化
+
 - [ ] アクセシビリティ強化（スクリーンリーダー対応）【部分完了】
   - ✅ `aria-label` をフォーム要素とアクションボタンに追加
   - ✅ ACCESSIBILITY.md ドキュメント作成
@@ -96,11 +106,6 @@
   - ⏸️ スクリーンリーダーテスト（NVDA/JAWS/VoiceOver）
 
 ## 未実装 / 推奨タスク（優先度：中）
-
-- [ ] テスト追加（エンドツーエンド）
-  - Playwright / Cypress でのE2Eテスト
-  - フォーム入力フロー、タブ切替、データ永続化のテスト
-  - バリデーション・オートコンプリート動作の検証
 
 - [ ] 運賃自動取得機能【Stage 2】
   - 有料API導入（駅すぱあと Web サービス / NAVITIME API 推奨）
