@@ -233,6 +233,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
       <div className="flex justify-end">
         <button
           onClick={handleExport}
+          aria-label={`${getFilteredRecords().length}件の記録を${format.toUpperCase()}形式でエクスポート`}
           className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
         >
           エクスポート

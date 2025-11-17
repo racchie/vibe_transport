@@ -27,8 +27,8 @@ export default function HistoryList({ records, onEdit, onDelete, onUse, compact 
             <div className="flex items-center gap-2 ml-2 shrink-0">
               <div className="font-medium text-right">¥{formatCurrency(r.fare)}</div>
               <div className="flex gap-1">
-                <button onClick={() => onEdit(r)} className="text-xs text-blue-600 dark:text-blue-400 hover:underline px-1">編集</button>
-                <button onClick={() => onDelete(r.id)} className="text-xs text-red-600 dark:text-red-400 hover:underline px-1">削除</button>
+                <button onClick={() => onEdit(r)} aria-label={`${r.date} ${r.fromStation}から${r.toStation}への記録を編集`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline px-1">編集</button>
+                <button onClick={() => onDelete(r.id)} aria-label={`${r.date} ${r.fromStation}から${r.toStation}への記録を削除`} className="text-xs text-red-600 dark:text-red-400 hover:underline px-1">削除</button>
               </div>
             </div>
           </div>
@@ -49,9 +49,9 @@ export default function HistoryList({ records, onEdit, onDelete, onUse, compact 
             <div className="flex items-start gap-3 shrink-0">
               <p className="font-semibold text-lg">¥{formatCurrency(r.fare)}</p>
               <div className="flex gap-1 flex-col sm:flex-row">
-                <button onClick={() => onEdit(r)} className="text-sm text-blue-600 dark:text-blue-400 hover:underline px-2 py-1">編集</button>
-                <button onClick={() => onDelete(r.id)} className="text-sm text-red-600 dark:text-red-400 hover:underline px-2 py-1">削除</button>
-                <button onClick={() => onUse({ fromStation: r.fromStation, toStation: r.toStation, transportationType: r.transportationType, transportationCompany: r.transportationCompany, fare: r.fare })} className="text-sm text-gray-700 dark:text-gray-300 hover:underline px-2 py-1">使用</button>
+                <button onClick={() => onEdit(r)} aria-label={`${r.fromStation}から${r.toStation}への記録を編集`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline px-2 py-1">編集</button>
+                <button onClick={() => onDelete(r.id)} aria-label={`${r.fromStation}から${r.toStation}への記録を削除`} className="text-sm text-red-600 dark:text-red-400 hover:underline px-2 py-1">削除</button>
+                <button onClick={() => onUse({ fromStation: r.fromStation, toStation: r.toStation, transportationType: r.transportationType, transportationCompany: r.transportationCompany, fare: r.fare })} aria-label={`${r.fromStation}から${r.toStation}への経路を使用して新規記録を作成`} className="text-sm text-gray-700 dark:text-gray-300 hover:underline px-2 py-1">使用</button>
               </div>
             </div>
           </div>

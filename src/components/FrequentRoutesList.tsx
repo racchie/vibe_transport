@@ -327,12 +327,14 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
             transportationCompany: route.transportationCompany,
             fare: route.fare,
           })}
+          aria-label={`${route.name}の経路を使用して新規記録を作成`}
           className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
         >
           この経路を使用
         </button>
         <button
           onClick={() => onEditRoute(route)}
+          aria-label={`${route.name}の経路情報を編集`}
           className="w-full bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:hover:bg-yellow-800"
         >
           編集

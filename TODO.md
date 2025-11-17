@@ -71,10 +71,12 @@
   - **Stage 3（次期リリース）**: バス停対応
     - API選定後に実装（Geoapify / OSM / Google Places など）
     - MVPには含めず、機能追加として段階的導入
-- [ ] アクセシビリティ強化（スクリーンリーダー対応）
-  - `aria-label`, `aria-describedby` をフォーム要素に追加
-  - スクリーンリーダーテスト（NVDA/JAWS/VoiceOver）
-  - セマンティック HTML の確認（`<button>` vs `<div>`）
+- [x] アクセシビリティ強化（スクリーンリーダー対応）【部分完了】
+  - ✅ `aria-label` をフォーム要素とアクションボタンに追加
+  - ✅ ACCESSIBILITY.md ドキュメント作成
+  - ⏸️ フォームバリデーションエラーの `aria-describedby` （次回リリース）
+  - ⏸️ 動的コンテンツの `aria-live` 通知（次回リリース）
+  - ⏸️ スクリーンリーダーテスト（NVDA/JAWS/VoiceOver）
 - [ ] ダークモード自動検出
   - システム設定（`prefers-color-scheme: dark`）の自動検出
   - ユーザー設定の localStorage 保存

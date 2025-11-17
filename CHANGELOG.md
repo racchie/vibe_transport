@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # CHANGELOG
 
+## [Unreleased] - 2025-11-17
+
+### Added
+- **アクセシビリティ強化（スクリーンリーダー対応）**
+  - `aria-label` をアクションボタンに追加（HistoryList, FrequentRoutesList, ExportPanel）
+  - 編集/削除/使用ボタンにコンテキスト情報を含むラベルを付与
+  - エクスポートボタンに件数と形式情報を含むラベルを付与
+  - `ACCESSIBILITY.md` ドキュメント作成（実装状況、今後の計画、テスト指針）
+
+### Improved
+- スクリーンリーダー使用時のユーザー体験向上
+- WCAG 2.1 AA 準拠の維持と強化
+
+---
+
 ## [0.0.5] - 2025-11-17
 
 ### Fixed
