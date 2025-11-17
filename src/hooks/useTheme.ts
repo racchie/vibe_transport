@@ -16,17 +16,27 @@ export function useTheme() {
   // Initialize with 'system' to avoid hydration mismatch
   const [theme, setThemeState] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  // Mark as mounted after first render
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load saved theme preference from localStorage after mount
   useEffect(() => {
+    if (!mounted) return;
+    
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
       setThemeState(savedTheme);
     }
-  }, []);
+  }, [mounted]);
 
   // Resolve 'system' to actual light/dark and apply to DOM
   useEffect(() => {
+    if (!mounted) return;
+    
     const updateTheme = () => {
       let effectiveTheme: 'light' | 'dark';
 
@@ -45,7 +55,9 @@ export function useTheme() {
       const root = document.documentElement;
       if (effectiveTheme === 'dark') {
         root.classList.add('dark');
+        root.classList.remove('light');
       } else {
+        root.classList.add('light');
         root.classList.remove('dark');
       }
     };
@@ -66,13 +78,15 @@ export function useTheme() {
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
-  }, [theme]);
+  }, [theme, mounted]);
 
   // Persist theme choice to localStorage
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
+    if (mounted) {
+      localStorage.setItem('theme', newTheme);
+    }
   };
 
-  return { theme, setTheme, resolvedTheme };
+  return { theme, setTheme, resolvedTheme, mounted };
 }
