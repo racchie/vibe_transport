@@ -206,18 +206,36 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="space-y-4">
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium">
-          日付
-        </label>
-        <input
-          type="date"
-          id="date"
-          value={formData.date}
-          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
-          required
-        />
+      {/* 日付と交通手段（2カラム: タブレット以上） */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium">
+            日付
+          </label>
+          <input
+            type="date"
+            id="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="transportationType" className="block text-sm font-medium">
+            交通手段
+          </label>
+          <select
+            id="transportationType"
+            value={formData.transportationType}
+            onChange={(e) => setFormData({ ...formData, transportationType: e.target.value as TransportationType })}
+            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+          >
+            <option value="train">電車</option>
+            <option value="bus">バス</option>
+          </select>
+        </div>
       </div>
 
       <div>
@@ -239,10 +257,11 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               type="button"
               onClick={() => handleFetchNearby('from')}
               disabled={status === 'locating' || status === 'loading'}
-              className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition min-h-[44px] min-w-[44px] md:min-w-0"
               aria-label="現在地から出発駅を検索"
             >
-              {status === 'locating' || status === 'loading' ? '取得中...' : '📍 現在地'}
+              <span className="md:hidden">{status === 'locating' || status === 'loading' ? '...' : '📍'}</span>
+              <span className="hidden md:inline">{status === 'locating' || status === 'loading' ? '取得中...' : '📍 現在地'}</span>
             </button>
           </div>
           
@@ -250,7 +269,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           {showCandidates && targetField === 'from' && (
             <div
               ref={candidatesRef}
-              className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto"
+              className="fixed md:absolute bottom-0 md:bottom-auto left-0 md:left-auto right-0 md:right-auto z-50 md:z-10 mt-0 md:mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-t-md md:rounded-md shadow-lg max-h-60 md:max-h-48 overflow-y-auto"
               role="listbox"
             >
               {status === 'loading' && (
@@ -298,10 +317,11 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               type="button"
               onClick={() => handleFetchNearby('to')}
               disabled={status === 'locating' || status === 'loading'}
-              className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition min-h-[44px] min-w-[44px] md:min-w-0"
               aria-label="現在地から到着駅を検索"
             >
-              {status === 'locating' || status === 'loading' ? '取得中...' : '📍 現在地'}
+              <span className="md:hidden">{status === 'locating' || status === 'loading' ? '...' : '📍'}</span>
+              <span className="hidden md:inline">{status === 'locating' || status === 'loading' ? '取得中...' : '📍 現在地'}</span>
             </button>
           </div>
           
@@ -309,7 +329,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
           {showCandidates && targetField === 'to' && (
             <div
               ref={candidatesRef}
-              className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto"
+              className="fixed md:absolute bottom-0 md:bottom-auto left-0 md:left-auto right-0 md:right-auto z-50 md:z-10 mt-0 md:mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-t-md md:rounded-md shadow-lg max-h-60 md:max-h-48 overflow-y-auto"
               role="listbox"
             >
               {status === 'loading' && (
@@ -338,53 +358,41 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
         </div>
       </div>
 
-      <div>
-        <label htmlFor="transportationType" className="block text-sm font-medium">
-          交通手段
-        </label>
-        <select
-          id="transportationType"
-          value={formData.transportationType}
-          onChange={(e) => setFormData({ ...formData, transportationType: e.target.value as TransportationType })}
-          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
-        >
-          <option value="train">電車</option>
-          <option value="bus">バス</option>
-        </select>
+      {/* 会社名と運賃（2カラム: タブレット以上） */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="transportationCompany" className="block text-sm font-medium">
+            交通機関名
+          </label>
+          <input
+            type="text"
+            id="transportationCompany"
+            value={formData.transportationCompany}
+            onChange={(e) => setFormData({ ...formData, transportationCompany: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="fare" className="block text-sm font-medium">
+            運賃
+          </label>
+          <input
+            type="text"
+            id="fare"
+            value={formData.fare}
+            onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 min-h-[44px]"
+            required
+            placeholder="0"
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="transportationCompany" className="block text-sm font-medium">
-          交通機関名
-        </label>
-        <input
-          type="text"
-          id="transportationCompany"
-          value={formData.transportationCompany}
-          onChange={(e) => setFormData({ ...formData, transportationCompany: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="fare" className="block text-sm font-medium">
-          運賃
-        </label>
-        <input
-          type="text"
-          id="fare"
-          value={formData.fare}
-          onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-white dark:bg-gray-900 dark:text-gray-100 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
-          required
-          placeholder="0"
-        />
-      </div>
-
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <button
           type="submit"
-          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
+          className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950 min-h-[44px] font-medium"
         >
           {isEditing ? '更新する' : '記録を保存'}
         </button>
@@ -398,7 +406,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
                 onCancel();
               }
             }}
-            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 focus:outline-none"
+            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 focus:outline-none min-h-[44px]"
           >
             キャンセル
           </button>

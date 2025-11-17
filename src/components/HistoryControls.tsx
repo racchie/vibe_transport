@@ -102,14 +102,14 @@ export default function HistoryControls({
               type="date"
               value={filters.from || ''}
               onChange={(e) => onChangeFilters({ ...filters, from: e.target.value })}
-              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 flex-1 sm:flex-none"
+              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 flex-1 sm:flex-none min-h-[44px]"
             />
             <span className="text-sm shrink-0">～</span>
             <input
               type="date"
               value={filters.to || ''}
               onChange={(e) => onChangeFilters({ ...filters, to: e.target.value })}
-              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 flex-1 sm:flex-none"
+              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 flex-1 sm:flex-none min-h-[44px]"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function HistoryControls({
           <select 
             value={groupBy} 
             onChange={(e) => onChangeGroupBy(e.target.value as 'none' | 'month')} 
-            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
+            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 min-h-[44px]"
           >
             <option value="none">なし</option>
             <option value="month">月別</option>
@@ -133,7 +133,7 @@ export default function HistoryControls({
           <select 
             value={pageSize} 
             onChange={(e) => onChangePageSize(Number(e.target.value))} 
-            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
+            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 min-h-[44px]"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -145,7 +145,7 @@ export default function HistoryControls({
         {/* Clear button */}
         <button 
           onClick={onClear} 
-          className="w-full md:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition md:ml-auto"
+          className="w-full md:w-auto border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition md:ml-auto min-h-[44px]"
         >
           クリア
         </button>

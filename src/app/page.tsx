@@ -163,7 +163,7 @@ export default function Home() {
   }, [travelRecords, filters, sortBy, sortOrder]);
 
   return (
-    <main className="container mx-auto px-4 py-8 dark:bg-gray-950 dark:text-gray-100 min-h-screen">
+    <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-10 dark:bg-gray-950 dark:text-gray-100 min-h-screen">
       {/* スキップリンク */}
       <a
         href="#main-content"
@@ -176,16 +176,17 @@ export default function Home() {
         メインコンテンツへスキップ
       </a>
 
-      <h1 className="text-3xl font-bold mb-8 dark:text-white">交通費記録アプリ</h1>
-
-      {/* Theme toggle */}
-      <div className="flex justify-end mb-4">
+      {/* ヘッダー：タイトルとテーマトグル */}
+      <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:justify-between sm:items-center sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold dark:text-white">交通費記録アプリ</h1>
         <ThemeToggle />
       </div>
 
       {/* タブナビゲーション */}
-      <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-        <nav className="-mb-px flex gap-2" aria-label="Tabs" role="tablist">
+      <div className="border-b border-gray-200 dark:border-gray-700 mb-6 sm:mb-8 relative">
+        {/* スクロールグラデーション */}
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-950 to-transparent pointer-events-none md:hidden z-10"></div>
+        <nav className="-mb-px flex gap-2 overflow-x-auto scrollbar-hide" aria-label="Tabs" role="tablist">
           {[
             { id: 'expense' as const, label: '新規記録' },
             { id: 'routes' as const, label: 'よく使う経路' },
@@ -223,8 +224,9 @@ export default function Home() {
               aria-controls={`tabpanel-${tab.id}`}
               tabIndex={activeTab === tab.id ? 0 : -1}
               className={`
-                whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium w-full max-w-[200px]
+                flex-shrink-0 whitespace-nowrap border-b-2 py-3 px-4 text-sm font-medium min-w-[120px] sm:min-w-0 sm:w-auto
                 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500
+                min-h-[44px] flex items-center justify-center
                 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600 dark:text-blue-300'

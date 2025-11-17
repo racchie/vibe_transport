@@ -96,7 +96,7 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
       <h2 className="text-lg font-semibold dark:text-gray-100">よく利用する経路</h2>
 
       <button
-        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-800"
+        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-800 min-h-[44px]"
         onClick={() => setShowForm((v) => !v)}
       >
         {showForm ? 'キャンセル' : '新規経路を追加'}
@@ -175,7 +175,7 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800"
+              className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800 min-h-[44px]"
             >
               登録
             </button>
@@ -183,7 +183,7 @@ export default function FrequentRoutesList({ routes, onUseRoute, onAddRoute, onE
         </form>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {routes.map((route) => (
           <RouteCard
             key={route.id}
@@ -302,8 +302,8 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
           />
         </div>
         <div className="flex gap-2 justify-end">
-          <button type="button" onClick={onCancelEdit} className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">キャンセル</button>
-          <button type="submit" className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800">保存</button>
+          <button type="button" onClick={onCancelEdit} className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 min-h-[44px]">キャンセル</button>
+          <button type="submit" className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 dark:hover:bg-green-800 min-h-[44px]">保存</button>
         </div>
       </form>
     );
@@ -318,7 +318,7 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
         </p>
         <p>運賃: ¥{route.fare.toLocaleString()}</p>
       </div>
-      <div className="flex gap-2 mt-3">
+      <div className="flex flex-col sm:flex-row gap-2 mt-3">
         <button
           onClick={() => onUseRoute({
             fromStation: route.fromStation,
@@ -328,14 +328,14 @@ function RouteCard({ route, onUseRoute, onEditRoute, isEditing, onSaveEdit, onCa
             fare: route.fare,
           })}
           aria-label={`${route.name}の経路を使用して新規記録を作成`}
-          className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 min-h-[44px]"
         >
           この経路を使用
         </button>
         <button
           onClick={() => onEditRoute(route)}
           aria-label={`${route.name}の経路情報を編集`}
-          className="w-full bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:hover:bg-yellow-800"
+          className="flex-1 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:hover:bg-yellow-800 min-h-[44px]"
         >
           編集
         </button>
