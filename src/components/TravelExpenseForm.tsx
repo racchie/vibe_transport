@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { TravelRecord, TransportationType, Place } from '../types';
 import { ValidationRules, parseNumericInput } from '../lib/validation';
 import { useNearbyPlaces } from '../hooks/useNearbyPlaces';
+import { formatCurrency } from '../lib/formatting';
 
 interface TravelExpenseFormProps {
   onSubmit?: (record: Omit<TravelRecord, 'id'>) => void;
@@ -411,7 +412,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
               <p>経路: {pendingPayload.fromStation} → {pendingPayload.toStation}</p>
               <p>交通手段: {pendingPayload.transportationType === 'train' ? '電車' : 'バス'}</p>
               {pendingPayload.transportationCompany && <p>交通機関: {pendingPayload.transportationCompany}</p>}
-              <p>運賃: ¥{pendingPayload.fare.toLocaleString()}</p>
+              <p>運賃: ¥{formatCurrency(pendingPayload.fare)}</p>
             </div>
             <div className="flex justify-end gap-2">
               <button

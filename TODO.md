@@ -1,6 +1,6 @@
 # TODO（最新版）
 
-更新日時: 2025-11-16
+更新日時: 2025-11-17
 
 ## 完了済み
 
@@ -36,6 +36,12 @@
   - ✅ キーボードショートカット（Escape でフィルタクリア、Ctrl+Enter で送信）
   - ✅ スキップリンク実装（非表示「メインコンテンツへスキップ」）
   - ✅ ARIA 属性完備（role='tablist', role='tab', aria-selected, aria-controls）
+- [x] Hydration不一致の自動スキャンと修正【完了】
+  - ✅ `toLocaleString()`を`formatCurrency()`に置き換え（HistoryList, TravelExpenseForm）
+  - ✅ ExportPanelの初期月選択をuseEffect内で設定
+  - ✅ ESLintルール追加（Math.random, new Date, Date.now, toLocaleString警告）
+  - ✅ Hydration一貫性テスト追加（formatting.test.ts, hydration.test.tsx）
+  - ✅ 新規ユーティリティ`src/lib/formatting.ts`作成
 
 ## 未実装 / 推奨タスク（優先度：高）
 
@@ -83,8 +89,6 @@
 
 ## 未実装 / 推奨タスク（優先度：低）
 
-- [ ] Hydration 不一致の自動スキャンと修正提案
-  - `toLocaleString` / `Intl` / `Math.random` 等のクライアント依存 API を検出・修正
 - [ ] データベース連携（クラウド DB 選定・実装）
   - Firebase, Supabase, MongoDB Atlas 等の検討
   - PC・スマホ双方でのデータ同期・共有機能

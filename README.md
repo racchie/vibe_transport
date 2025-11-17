@@ -1,6 +1,6 @@
 # Vibe Transport
 
-Version: 0.0.4
+Version: 0.0.5
 
 交通費記録アプリケーション - 通勤や出張での交通費を簡単に記録・管理
 

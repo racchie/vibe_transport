@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TravelRecord } from '../types';
 import * as XLSX from 'xlsx';
 
@@ -14,9 +14,14 @@ export default function ExportPanel({ records }: ExportPanelProps) {
   const [endDate, setEndDate] = useState('');
   const [format, setFormat] = useState<ExportFormat>('xlsx');
   const [dateRange, setDateRange] = useState<DateRange>('all');
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7)
-  );
+  const [selectedMonth, setSelectedMonth] = useState('');
+
+  // Set initial month only on client to avoid hydration mismatch
+  useEffect(() => {
+    if (!selectedMonth) {
+      setSelectedMonth(new Date().toISOString().slice(0, 7));
+    }
+  }, [selectedMonth]);
 
   // 利用可能な月のリストを取得
   const getAvailableMonths = () => {

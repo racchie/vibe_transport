@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# CHANGELOG
+
+## [0.0.5] - 2025-11-17
+
+### Fixed
+- **Hydration不一致の修正**
+  - `toLocaleString()`を独自の`formatCurrency()`関数に置き換え、サーバー/クライアント間で一貫した通貨フォーマットを実現
+  - `ExportPanel`の初期月選択を`useEffect`内で設定し、SSR/CSRの不一致を解消
+  - 新規ユーティリティ`src/lib/formatting.ts`を作成（`formatCurrency`, `getClientOnlyValue`）
+
+### Added
+- **ESLint hydrationルール**
+  - `Math.random()`, `new Date()`, `Date.now()`, `toLocaleString()`の使用を警告する静的解析ルール追加
+  - 将来のHydration不一致を予防
+- **Hydration一貫性テスト**
+  - `tests/formatting.test.ts`: フォーマット関数のユニットテスト（8テスト）
+  - `tests/hydration.test.tsx`: HistoryListの複数レンダリング一貫性テスト（3テスト）
+
+### Changed
+- テスト総数: 28 → 39（+11テスト）
+
+---
+
 ## [0.0.4] - 2025-11-16
 
 ### Added

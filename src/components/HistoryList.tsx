@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TravelRecord } from '../types';
+import { formatCurrency } from '../lib/formatting';
 
 interface Props {
   records: TravelRecord[];
@@ -24,7 +25,7 @@ export default function HistoryList({ records, onEdit, onDelete, onUse, compact 
               <div className="text-xs text-gray-500 dark:text-gray-400">{r.transportationType === 'train' ? '電車' : 'バス'}</div>
             </div>
             <div className="flex items-center gap-2 ml-2 shrink-0">
-              <div className="font-medium text-right">¥{r.fare.toLocaleString()}</div>
+              <div className="font-medium text-right">¥{formatCurrency(r.fare)}</div>
               <div className="flex gap-1">
                 <button onClick={() => onEdit(r)} className="text-xs text-blue-600 dark:text-blue-400 hover:underline px-1">編集</button>
                 <button onClick={() => onDelete(r.id)} className="text-xs text-red-600 dark:text-red-400 hover:underline px-1">削除</button>
@@ -46,7 +47,7 @@ export default function HistoryList({ records, onEdit, onDelete, onUse, compact 
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{r.date} | {r.transportationType === 'train' ? '電車' : 'バス'}{r.transportationCompany && ` - ${r.transportationCompany}`}</p>
             </div>
             <div className="flex items-start gap-3 shrink-0">
-              <p className="font-semibold text-lg">¥{r.fare.toLocaleString()}</p>
+              <p className="font-semibold text-lg">¥{formatCurrency(r.fare)}</p>
               <div className="flex gap-1 flex-col sm:flex-row">
                 <button onClick={() => onEdit(r)} className="text-sm text-blue-600 dark:text-blue-400 hover:underline px-2 py-1">編集</button>
                 <button onClick={() => onDelete(r.id)} className="text-sm text-red-600 dark:text-red-400 hover:underline px-2 py-1">削除</button>
