@@ -42,6 +42,11 @@
   - ✅ ESLintルール追加（Math.random, new Date, Date.now, toLocaleString警告）
   - ✅ Hydration一貫性テスト追加（formatting.test.ts, hydration.test.tsx）
   - ✅ 新規ユーティリティ`src/lib/formatting.ts`作成
+- [x] CI / リリース自動化【完了】
+  - ✅ GitHub Actionsワークフロー `.github/workflows/release.yml` 作成
+  - ✅ タグプッシュ時に自動でGitHub Release作成
+  - ✅ CHANGELOGからリリースノート自動抽出
+  - ✅ リリース前のテスト・ビルド検証
 
 ## 未実装 / 推奨タスク（優先度：高）
 
@@ -92,8 +97,6 @@
 - [ ] データベース連携（クラウド DB 選定・実装）
   - Firebase, Supabase, MongoDB Atlas 等の検討
   - PC・スマホ双方でのデータ同期・共有機能
-- [ ] CI / リリース自動化
-  - タグ付けで GitHub Release を作成するワークフロー
 - [ ] リリースノート作成（GitHub Release）
 
 ---

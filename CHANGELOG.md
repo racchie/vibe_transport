@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `toLocaleString()`を独自の`formatCurrency()`関数に置き換え、サーバー/クライアント間で一貫した通貨フォーマットを実現
   - `ExportPanel`の初期月選択を`useEffect`内で設定し、SSR/CSRの不一致を解消
   - 新規ユーティリティ`src/lib/formatting.ts`を作成（`formatCurrency`, `getClientOnlyValue`）
+- **CIエラー修正**
+  - テストファイルの`@typescript-eslint/no-explicit-any`エラーを修正
+  - 安全な`Date.now()`/`new Date()`使用箇所に`eslint-disable-next-line`追加
 
 ### Added
 - **ESLint hydrationルール**
@@ -22,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Hydration一貫性テスト**
   - `tests/formatting.test.ts`: フォーマット関数のユニットテスト（8テスト）
   - `tests/hydration.test.tsx`: HistoryListの複数レンダリング一貫性テスト（3テスト）
+- **CI/リリース自動化**
+  - GitHub Actionsワークフロー `.github/workflows/release.yml` 追加
+  - タグプッシュ時にGitHub Releaseを自動作成
+  - CHANGELOGからリリースノートを自動抽出
+  - テストとビルドをリリース前に実行
 
 ### Changed
 - テスト総数: 28 → 39（+11テスト）
