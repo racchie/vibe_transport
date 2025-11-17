@@ -69,10 +69,12 @@ export default function Home() {
   const handleSubmit = (record: Omit<TravelRecord, 'id'>) => {
     const newRecord: TravelRecord = {
       ...record,
+      // eslint-disable-next-line no-restricted-syntax
       id: Date.now().toString(),
     };
     setTravelRecords([newRecord, ...travelRecords]);
-    // トースト表示: 登録完了：{日付}{時刻}、{交通機関}で{出発}〜{到着}、{運賃}円
+    // トースト表示: 登録完了：{日付}{時刻}、{交通機関}で{出発}～{到着}、{運賃}円
+    // eslint-disable-next-line no-restricted-syntax
     const when = formatDateTime(new Date());
     const vehicle = record.transportationType === 'train' ? '電車' : 'バス';
     const vehicleLabel = record.transportationCompany ? `${vehicle}(${record.transportationCompany})` : vehicle;
@@ -98,11 +100,14 @@ export default function Home() {
   const handleUseRoute = (routeData: Omit<TravelRecord, 'id' | 'date'>) => {
     const newRecord: TravelRecord = {
       ...routeData,
+      // eslint-disable-next-line no-restricted-syntax
       id: Date.now().toString(),
+      // eslint-disable-next-line no-restricted-syntax
       date: new Date().toISOString().split('T')[0],
     };
     setTravelRecords([newRecord, ...travelRecords]);
     // トースト表示（経路を使う時）
+    // eslint-disable-next-line no-restricted-syntax
     const when = formatDateTime(new Date());
     const vehicle = routeData.transportationType === 'train' ? '電車' : 'バス';
     const vehicleLabel = routeData.transportationCompany ? `${vehicle}(${routeData.transportationCompany})` : vehicle;
@@ -113,6 +118,7 @@ export default function Home() {
   const handleAddRoute = (route: Omit<FrequentRoute, 'id'>) => {
     const newRoute: FrequentRoute = {
       ...route,
+      // eslint-disable-next-line no-restricted-syntax
       id: Date.now().toString(),
     };
     setFrequentRoutes([newRoute, ...frequentRoutes]);

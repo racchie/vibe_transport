@@ -14,6 +14,7 @@ export function useToast() {
 
   const addToast = useCallback(
     (message: string, options?: { type?: ToastType; timeout?: number }) => {
+      // eslint-disable-next-line no-restricted-syntax
       const id = Date.now().toString();
       const type = options?.type ?? 'info';
       const timeout = options?.timeout ?? 3500;

@@ -46,6 +46,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
       return;
     }
     // Reset to new-entry state when there's no initialRecord
+    // eslint-disable-next-line no-restricted-syntax
     const today = new Date().toISOString().split('T')[0];
     setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: '' });
   }, [initialRecord]);
@@ -196,6 +197,7 @@ export default function TravelExpenseForm({ onSubmit, onUpdate, onCancel, initia
   const isEditing = Boolean(formData.id);
 
   const resetToNew = () => {
+    // eslint-disable-next-line no-restricted-syntax
     const today = new Date().toISOString().split('T')[0];
     setFormData({ id: undefined, date: today, fromStation: '', toStation: '', transportationType: 'train', transportationCompany: '', fare: '' });
     setPendingPayload(null);

@@ -19,10 +19,10 @@ function mockGeolocation(success = true) {
 
 // Mock fetch for HeartRails
 function mockHeartRails(stations: Array<{ name: string; line: string; x: string; y: string; distance?: string }> = []) {
-  vi.spyOn(global, 'fetch' as any).mockResolvedValue({
+  vi.spyOn(global, 'fetch').mockResolvedValue({
     ok: true,
     json: async () => ({ response: { station: stations } }),
-  } as any);
+  } as Response);
 }
 
 describe('useNearbyPlaces', () => {

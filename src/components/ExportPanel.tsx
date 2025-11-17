@@ -19,6 +19,7 @@ export default function ExportPanel({ records }: ExportPanelProps) {
   // Set initial month only on client to avoid hydration mismatch
   useEffect(() => {
     if (!selectedMonth) {
+      // eslint-disable-next-line no-restricted-syntax
       setSelectedMonth(new Date().toISOString().slice(0, 7));
     }
   }, [selectedMonth]);

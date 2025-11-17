@@ -11,7 +11,7 @@ function setupGeolocationAndFetch() {
     configurable: true,
   });
 
-  vi.spyOn(global, 'fetch' as any).mockResolvedValue({
+  vi.spyOn(global, 'fetch').mockResolvedValue({
     ok: true,
     json: async () => ({
       response: {
@@ -21,7 +21,7 @@ function setupGeolocationAndFetch() {
         ],
       },
     }),
-  } as any);
+  } as Response);
 }
 
 describe('TravelExpenseForm geolocation integration', () => {
@@ -33,7 +33,7 @@ describe('TravelExpenseForm geolocation integration', () => {
     setupGeolocationAndFetch();
 
     const addToast = vi.fn();
-    render(<TravelExpenseForm onSubmit={vi.fn()} addToast={addToast as any} />);
+    render(<TravelExpenseForm onSubmit={vi.fn()} addToast={addToast} />);
 
     const fromInput = screen.getByLabelText('出発駅/バス停');
     const geoBtn = screen.getByRole('button', { name: '現在地から出発駅を検索' });
